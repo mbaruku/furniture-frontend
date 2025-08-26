@@ -1,0 +1,133 @@
+/* General container */
+.container {
+    padding: 20px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+/* Page title */
+h2 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #343a40;
+}
+
+/* Search input */
+.form-control {
+    max-width: 400px;
+    margin: 0 auto 20px auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 10px 14px;
+}
+
+/* Table */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.table {
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.table th, .table td {
+    vertical-align: middle !important;
+}
+
+.table th {
+    font-weight: 600;
+    text-align: center;
+}
+
+.table td {
+    font-size: 0.9rem;
+}
+
+/* Badges */
+.badge {
+    font-size: 0.85rem;
+    padding: 0.4em 0.6em;
+}
+
+.badge-success {
+    background-color: #28a745;
+}
+
+.badge-warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.badge-secondary {
+    background-color: #6c757d;
+}
+
+/* Buttons */
+.btn-sm {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border: none;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border: none;
+}
+
+.btn-info {
+    background-color: #17a2b8;
+    border: none;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border: none;
+}
+
+/* Delivery fee input */
+td input[type="number"] {
+    width: 80px;
+    padding: 4px 6px;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    text-align: right;
+}
+
+/* List of order items */
+td ul {
+    padding-left: 16px;
+    margin-bottom: 0;
+}
+
+td ul li {
+    margin-bottom: 4px;
+    font-size: 0.85rem;
+}
+
+/* Table responsiveness for smaller screens */
+@media (max-width: 1200px) {
+    .table th, .table td {
+        font-size: 0.8rem;
+        padding: 6px 8px;
+    }
+}
+
+@media (max-width: 768px) {
+    td ul li {
+        font-size: 0.75rem;
+    }
+
+    .btn-sm {
+        font-size: 0.7rem;
+        padding: 3px 6px;
+    }
+}

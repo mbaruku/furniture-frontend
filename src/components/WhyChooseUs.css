@@ -1,0 +1,47 @@
+/* WhyChooseUs.css */
+.why-choose-us {
+  background: #f9f9f9;
+  padding: 50px 15px; /* default desktop/tablet spacing */
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.feature-box {
+  margin-bottom: 30px;
+}
+
+.feature-icon {
+  font-size: 2.5rem;
+  color: #8b5e3c; /* rangi ya mbao */
+  margin-bottom: 15px;
+}
+
+/* ====== Responsive Spacing ====== */
+
+/* Tablets */
+@media (max-width: 992px) {
+  .why-choose-us {
+    padding: 40px 15px;
+  }
+}
+
+/* Simu */
+@media (max-width: 576px) {
+  .why-choose-us {
+    padding: 30px 10px;
+  }
+
+  .section-title {
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+  }
+
+  .feature-icon {
+    font-size: 2rem;
+  }
+}

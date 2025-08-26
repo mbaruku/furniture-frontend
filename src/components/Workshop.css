@@ -1,0 +1,55 @@
+.workshop-container {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.workshop-container table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.workshop-container th,
+.workshop-container td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+.workshop-container th {
+    background: #f4a261;
+    color: white;
+}
+
+.workshop-container img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+
+.add-item-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.add-item-form input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.add-item-form button {
+    padding: 8px 15px;
+    background-color: #f4a261;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-item-form button:hover {
+    background-color: #e76f51;
+}

@@ -1,0 +1,142 @@
+/* ManualOrderForm.css */
+
+.manual-order-form {
+  max-width: 600px;
+  margin: 60px auto;
+  padding: 40px;
+  background: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.manual-order-form h2 {
+  text-align: center;
+  margin-bottom: 24px;
+  color: #333;
+}
+
+.manual-order-form input,
+.manual-order-form select,
+.manual-order-form textarea {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 10px 0 20px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: 0.3s border ease;
+}
+
+.manual-order-form input:focus,
+.manual-order-form select:focus,
+.manual-order-form textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.manual-order-form select[multiple] {
+  height: auto;
+}
+
+.manual-order-form button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 14px;
+  font-size: 16px;
+  width: 100%;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.manual-order-form button:hover {
+  background-color: #0056b3;
+}
+
+.manual-order-form p {
+  text-align: center;
+  margin-top: 15px;
+  color: green;
+}
+
+
+.manual-order-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.manual-order-form input,
+.manual-order-form select,
+.manual-order-form textarea {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.product-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+    background: #f9f9f9;
+    border-radius: 6px;
+}
+
+.product-list li {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.product-list li:hover {
+    background: #e0f7fa;
+}
+
+.selected-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+}
+
+.selected-items-table th,
+.selected-items-table td {
+    padding: 8px;
+    border: 1px solid #ccc;
+    text-align: left;
+}
+
+.total-price {
+    font-weight: bold;
+    font-size: 1.2em;
+    margin: 10px 0;
+}
+
+.popup {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 6px;
+    color: #fff;
+    text-align: center;
+}
+
+.popup.success {
+    background-color: #4caf50;
+}
+
+.popup.error {
+    background-color: #f44336;
+}
+
+.info {
+    margin: 10px 0;
+    background: #e3f2fd;
+    padding: 10px;
+    border-left: 4px solid #2196f3;
+}

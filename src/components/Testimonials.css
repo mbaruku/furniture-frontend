@@ -1,0 +1,31 @@
+.testimonials-section {
+  padding-top: 30px;   /* badala ya py-5 */
+  padding-bottom: 30px;
+}
+
+
+.section-title {
+    font-size: 30px;
+    color: #333;
+    font-weight: bold;
+}
+
+.testimonial-card {
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+.message {
+    font-size: 16px;
+    font-style: italic;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.name {
+    font-weight: bold;
+    color: #c28840;
+}

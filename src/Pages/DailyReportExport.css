@@ -1,0 +1,59 @@
+/* DailyReportExport.css */
+
+.report-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+.report-container h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.report-section {
+  margin-bottom: 2rem;
+}
+
+.report-section label {
+  font-weight: bold;
+  margin-right: 0.5rem;
+  color: #555;
+}
+
+.report-section input[type="date"] {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.report-section input[type="date"]:focus {
+  border-color: #007bff;
+}
+
+.report-section button {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  margin-left: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.report-section button:hover:not(:disabled) {
+  background: #0056b3;
+}
+
+.report-section button:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}

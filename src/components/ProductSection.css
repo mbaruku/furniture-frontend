@@ -1,0 +1,36 @@
+.product-section-container {
+  margin-bottom: 2rem;
+}
+
+.product-section-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.horizontal-scroll-container {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory; /* snap kwa card */
+  -webkit-overflow-scrolling: touch; /* smooth scroll kwa iOS */
+  gap: 1rem; /* nafasi kati ya cards */
+  padding-bottom: 1rem; /* nafasi chini kwa scroll */
+}
+
+.scroll-item {
+  flex: 0 0 auto; /* card haihitaji full width */
+  scroll-snap-align: start;
+  width: 250px; /* ukubwa wa card, unaweza kubadilisha */
+  box-sizing: border-box;
+}
+
+/* Optional: toa scrollbar kwa webkit */
+.horizontal-scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Optional: responsive kwa screens ndogo (mobile) */
+@media (max-width: 768px) {
+  .scroll-item {
+    width: 80%; /* mobile inachukua sehemu kubwa ya screen */
+  }
+}

@@ -1,0 +1,43 @@
+/* AdminLogin.css */
+
+.login-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* inachukua height yote ya screen */
+  background-color: #f8f9fa; /* background laini */
+}
+
+.login-form-box {
+  background-color: #ffffff;
+  padding: 2rem 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px; /* haizidi 400px kwenye screens kubwa */
+}
+
+.login-form-box h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #343a40;
+}
+
+.login-form-box label {
+  font-weight: 500;
+  color: #495057;
+}
+
+.login-form-box .form-control {
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.login-form-box .btn {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+}

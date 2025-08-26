@@ -1,0 +1,52 @@
+.about-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  line-height: 1.6;
+}
+
+/* Headings */
+.about-page h1, 
+.about-page h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Sehemu za kila block */
+.about-page section {
+  margin-bottom: 40px;
+}
+
+/* Intro text */
+.about-intro p {
+  font-size: 1.1rem;
+  text-align: center;
+  color: #555;
+}
+
+/* Malengo */
+.about-goals ul {
+  list-style-type: disc;
+  padding-left: 40px;
+  color: #444;
+}
+
+/* Video promo */
+.video-promo {
+  margin-bottom: 20px; /* Imebanwa kidogo ili isiachane sana na Wasiliana Nasi */
+}
+
+/* Wasiliana nasi (CustomerForm & SubscribeForm) */
+.about-page section.contact-section {
+  margin-top: 10px;   /* Banwa juu ili zikaribiane na video */
+  margin-bottom: 40px;
+}
+
+/* Values section */
+.about-values {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+}

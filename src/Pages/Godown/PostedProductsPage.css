@@ -1,0 +1,181 @@
+/* Grid ya posted products */
+.posted-products-scroll {
+  display: grid;
+  gap: 16px; /* nafasi kati ya products */
+  grid-template-columns: repeat(2, 1fr); /* default: simu, 2 per row */
+  padding-bottom: 20px; /* ili usikanyage bottom navbar */
+}
+
+/* Default design ya card */
+.posted-product-card {
+  height: 300px;   /* mfano */
+  padding: 16px;
+  font-size: 16px;
+}
+
+/* Kwa screen ndogo (simu) pungua urefu na padding */
+@media (max-width: 480px) {
+  .posted-product-card {
+    height: 220px;     /* fupi zaidi */
+    padding: 10px;     /* padding ndogo */
+    font-size: 14px;   /* maandishi madogo kidogo */
+  }
+}
+
+
+
+
+/* Tablet / iPad */
+@media (min-width: 600px) and (max-width: 1024px) {
+  .posted-products-scroll {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Desktop */
+@media (min-width: 1025px) {
+  .posted-products-scroll {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.posted-products-scroll > * {
+  width: 100%;
+}
+
+/* Modal overlay - full screen with semi-transparent background */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 16px;
+  overflow-y: auto; /* scroll support for small screens */
+  box-sizing: border-box;
+}
+
+/* Modal content box */
+.modal-content {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh; /* scroll inside modal if content too tall */
+  overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  animation: modalShow 0.3s ease-in-out;
+}
+
+/* Fade-in animation */
+@keyframes modalShow {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Form inside modal */
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.modal-content form input,
+.modal-content form select {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.modal-content form button {
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: #28a745;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.modal-content form button:hover {
+  background-color: #218838;
+}
+
+/* Close button */
+.modal-content > button {
+  margin-top: 12px;
+  background-color: #dc3545;
+  color: white;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.modal-content > button:hover {
+  background-color: #c82333;
+}
+
+/* Cart item preview inside modal */
+.cart-item-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.cart-item-preview img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.cart-item-preview div {
+  flex: 1;
+}
+
+.cart-item-preview div p {
+  margin: 2px 0;
+}
+
+/* Quantity buttons inside modal */
+.cart-item-preview div div button {
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+/* Optional: responsive adjustments for small screens */
+@media (max-width: 480px) {
+  .modal-content {
+    padding: 16px;
+  }
+  .cart-item-preview img {
+    width: 50px;
+    height: 50px;
+  }
+  .cart-item-preview div div button {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+}

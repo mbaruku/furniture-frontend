@@ -1,0 +1,154 @@
+/* RegisterEmployee.css */
+
+form {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+    max-width: 500px;
+    margin: auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+form h2 {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 16px;
+    color: #333;
+    text-align: center;
+}
+
+.input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+    background-color: #fff;
+}
+
+.input:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+.btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #45a049;
+}
+
+form h2 {
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
+    color: #111827;
+    /* Gray-900 */
+    text-align: center;
+}
+
+.input {
+    width: 100%;
+    padding: 0.55rem 1rem;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    border: 2px solid #4f46e5;
+    /* Indigo-600 */
+    border-radius: 10px;
+    outline-offset: 3px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    box-sizing: border-box;
+    color: #374151;
+    /* Gray-700 */
+    user-select: text;
+}
+
+.input::placeholder {
+    color: #9ca3af;
+    /* Gray-400 */
+}
+
+.input:focus {
+    border-color: #4338ca;
+    /* Indigo-700 */
+    box-shadow: 0 0 8px #4338caaa;
+}
+
+select.input {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D'10'%20height%3D'6'%20viewBox%3D'0%200%2010%206'%20xmlns%3D'http%3A//www.w3.org/2000/svg'%3E%3Cpath%20d%3D'M0%200l5%206%205-6z'%20fill%3D'%234f46e5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 10px 6px;
+    padding-right: 2.5rem;
+    cursor: pointer;
+}
+
+select.input:focus {
+    outline: none;
+    border-color: #4338ca;
+    box-shadow: 0 0 8px #4338caaa;
+}
+
+/* Submit Button */
+.btn {
+    width: 100%;
+    padding: 0.65rem 0;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    user-select: none;
+}
+
+.btn.bg-green-600 {
+    background-color: #16a34a;
+    /* Green-600 */
+    color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgb(22 163 74 / 0.4);
+}
+
+.btn.bg-green-600:hover {
+    background-color: #15803d;
+    /* Green-700 */
+    box-shadow: 0 6px 20px rgb(21 128 61 / 0.6);
+}
+
+.btn:disabled,
+.btn:disabled:hover {
+    background-color: #a7f3d0;
+    /* Light green */
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    form {
+        margin: 1rem;
+        padding: 1.25rem 1.5rem;
+    }
+
+    .input {
+        font-size: 0.95rem;
+    }
+
+    .btn {
+        font-size: 1rem;
+    }
+}

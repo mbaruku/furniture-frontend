@@ -1,0 +1,119 @@
+.admin-section {
+    max-width: 1000px;
+    margin: auto;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+}
+
+.admin-section h2 {
+    margin-bottom: 15px;
+    color: #2c3e50;
+    border-left: 5px solid #3498db;
+    padding-left: 10px;
+}
+
+.section-box {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.message-card {
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+.message-card:last-child {
+    border-bottom: none;
+}
+
+.message-card strong {
+    color: #34495e;
+}
+
+.message-card em {
+    font-size: 0.85rem;
+    color: #7f8c8d;
+}
+
+.message-card p {
+    margin: 5px 0;
+}
+
+.subscribers-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.subscribers-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.subscribers-list li:last-child {
+    border-bottom: none;
+}
+
+
+.admin-section {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+    font-family: "Segoe UI", sans-serif;
+    color: #333;
+}
+
+.card-container {
+    border: 1px solid #ddd;
+    background: #f9f9f9;
+    padding: 15px;
+    margin-bottom: 30px;
+    border-radius: 10px;
+}
+
+.card {
+    background-color: white;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-left: 4px solid #0a66c2;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+}
+
+.message-card .timestamp {
+    font-size: 0.85em;
+    color: gray;
+    margin-bottom: 5px;
+}
+
+.email {
+    font-size: 0.85em;
+    color: #555;
+}
+
+.subscriber-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.subscriber-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95em;
+}
+
+.subscriber-email {
+    font-weight: 500;
+}
+
+.subscriber-date {
+    color: gray;
+    font-size: 0.9em;
+}

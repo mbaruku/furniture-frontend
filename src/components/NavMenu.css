@@ -1,0 +1,102 @@
+/* NavMenu.css */
+
+/* Topbar adjustments */
+.navbar {
+  height: 80px; /* kiwango cha kawaida, sio kubwa sana */
+  padding: 0.5rem 1rem;
+  background-color: #ffffff; /* inalingana na index.css */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+
+/* Logo adjustments */
+.navbar-brand img {
+  height: 60px; /* kidogo chini ya 70px */
+  width: 60px;
+  object-fit: cover;
+}
+
+/* Brand text */
+.navbar-brand span {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+/* Welcome message */
+.topbar-welcome {
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Search form */
+.form-inline {
+  display: flex;
+  align-items: center;
+}
+
+.form-inline .form-control {
+  height: 35px;
+  font-size: 0.9rem;
+}
+
+.form-inline .btn {
+  height: 35px;
+  font-size: 0.9rem;
+}
+
+/* Cart button */
+.cart-button {
+  margin-left: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .navbar {
+    flex-direction: column;
+    height: auto;
+    padding: 0.5rem 1rem;
+  }
+
+  .topbar-welcome {
+    margin-top: 5px;
+    text-align: center;
+  }
+
+  .form-inline {
+    width: 100%;
+    justify-content: center;
+    margin-top: 5px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-brand span {
+    font-size: 1rem;
+  }
+
+  .form-inline .form-control {
+    width: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-brand img {
+    height: 50px;
+    width: 50px;
+  }
+
+  .navbar-brand span {
+    font-size: 0.9rem;
+  }
+
+  .form-inline .form-control {
+    width: 120px;
+    font-size: 0.8rem;
+  }
+
+  .form-inline .btn {
+    font-size: 0.8rem;
+  }
+}
