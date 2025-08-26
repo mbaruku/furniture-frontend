@@ -1,8 +1,0 @@
-[build]
-  publish = "dist"       # Vite build folder
-  command = "npm run build"
-
-[[redirects]]
-  from = "/*"            # catch all routes
-  to = "/index.html"     # send all requests to React app
-  status = 200
