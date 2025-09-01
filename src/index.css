@@ -1,6 +1,6 @@
 /* index.css */
 
-/* Reset */
+/* Reset global styles */
 * {
   margin: 0;
   padding: 0;
@@ -9,63 +9,152 @@
 
 html, body {
   height: 100%;
-  width: 100%;
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f8f9fa;
-  display: flex;
-  flex-direction: column;
+  scroll-behavior: smooth;
 }
 
-/* Main container */
-#root {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+/* Container settings */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
 }
 
-/* Content area (kuepuka kufunikwa na navbar) */
-.content {
-  flex: 1;
-  padding-bottom: 80px; /* nafasi ya bottom navbar */
+/* Topbar adjustments */
+.navbar {
+  height: 2px;
+  padding: 0.5rem 0rem;
 }
 
-/* Bottom navbar */
-.bottom-navbar {
-  position: fixed;
-  bottom: 0; /* 🚀 ibaki chini kabisa */
-  left: 0;
+.topbar-welcome {
+  font-size: 0.9rem;
+}
+
+/* Ensure main content is not hidden behind sticky navbar */
+main, .d-flex > div {
+  margin-top: 1px; /* adjust to match navbar height */
+}
+
+/* HomeSlider */
+.home-slider {
   width: 100%;
-  background-color: #ffffff;
-  border-top: 1px solid #ddd;
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-  z-index: 9999;
-  padding: 10px 0;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding-bottom: env(safe-area-inset-bottom); /* iPhone safe area */
+  max-height: 500px;
+  overflow: hidden;
+  margin-bottom: 40px;
 }
 
-/* Bottom navbar icons/text */
-.bottom-navbar a {
-  text-decoration: none;
-  color: #444;
-  font-size: 14px;
+.home-slider img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* WhyChooseUs Section */
+.why-choose-us {
+  padding: 50px 0;
+  background-color: #ffffff;
+}
+
+.why-choose-us .feature-box {
+  margin-bottom: 30px;
+}
+
+.why-choose-us .feature-icon {
+  font-size: 40px;
+  color: #007bff;
+  margin-bottom: 15px;
+}
+
+/* Video Section */
+.video-section {
+  padding: 50px 0;
+  background-color: #f1f1f1;
+}
+
+/* Testimonials */
+.testimonials-section {
+  padding: 50px 0;
+  background-color: #ffffff;
+}
+
+.testimonial-card {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  min-height: 150px; /* limit height */
   display: flex;
   flex-direction: column;
-  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-.bottom-navbar a.active {
-  color: #007bff;
+/* ProductSection */
+.product-section {
+  padding: 50px 0;
+  background-color: #f8f9fa;
 }
 
-/* Responsive */
-@media (min-width: 768px) {
-  .bottom-navbar {
-    max-width: 480px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 16px 16px 0 0;
+.product-section h2 {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+/* Footer */
+footer {
+  background-color: #343a40;
+  color: white;
+  padding: 40px 0;
+}
+
+/* BottomNavbar */
+.bottom-navbar {
+  position: fixed;       /* ibaki fixed kwenye screen */
+  bottom: 100px;             /* ibaki kabisa chini */
+  left: 0;
+  width: 100%;           /* ichukue upana wote */
+  background-color: #ffffff;
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+  z-index: 9999;         /* iwe juu ya content */
+  padding-bottom: env(safe-area-inset-bottom); /* support kwa iPhone yenye notch */
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .navbar {
+    height: auto;
+    flex-wrap: wrap;
+  }
+
+  .home-slider {
+    max-height: 300px;
+  }
+
+  .why-choose-us .feature-box {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .testimonial-card {
+    min-height: 120px;
+  }
+
+  main, .d-flex > div {
+    margin-top: 120px; /* for smaller devices */
+  }
+}
+
+@media (max-width: 480px) {
+  .home-slider {
+    max-height: 200px;
+  }
+
+  .why-choose-us .feature-icon {
+    font-size: 30px;
+  }
+
+  .testimonial-card {
+    min-height: 100px;
   }
 }

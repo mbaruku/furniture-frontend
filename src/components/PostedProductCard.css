@@ -1,15 +1,24 @@
+/* Container ya kadi zote */
+.products-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; /* nafasi kati ya kadi */
+    justify-content: center; /* katikati kwenye screens ndogo */
+    padding: 10px;
+}
+
+/* Kadi ya bidhaa */
 .product-grid {
     background: #fff;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 15px;
-    margin: 10px;
-    width: 100%;
-    max-width: 280px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     transition: transform 0.2s;
+    flex: 1 1 250px; /* inachukua nafasi na kukua kidogo kulingana na container */
+    max-width: 280px; /* max kwa screens kubwa */
 }
 
 .product-grid:hover {
@@ -31,6 +40,7 @@
     border-radius: 12px;
 }
 
+/* Badges */
 .tag-badge,
 .discount-badge {
     position: absolute;
@@ -52,6 +62,7 @@
     background-color: #ff9800;
 }
 
+/* Maelezo ya bidhaa */
 .item-details {
     margin-top: 15px;
     text-align: left;
@@ -110,11 +121,11 @@
     background-color: #218838;
 }
 
-/* Responsive: Mobile devices */
+/* Mobile devices */
 @media (max-width: 480px) {
     .product-grid {
+        flex: 1 1 100%;
         max-width: 100%;
-        margin: 5px 0;
         padding: 10px;
     }
 
@@ -137,11 +148,11 @@
     }
 }
 
-/* Responsive: Tablets */
+/* Tablets */
 @media (min-width: 481px) and (max-width: 768px) {
     .product-grid {
+        flex: 1 1 45%; /* inachukua karibu nusu ya row */
         max-width: 45%;
-        margin: 10px 5px;
     }
 
     .image-wrapper {
@@ -151,18 +162,13 @@
     .item-name {
         font-size: 15px;
     }
-
-    .item-price,
-    .price-highlight {
-        font-size: 15px;
-    }
 }
 
-/* Responsive: Small desktops */
+/* Small desktops */
 @media (min-width: 769px) and (max-width: 1024px) {
     .product-grid {
+        flex: 1 1 30%;
         max-width: 30%;
-        margin: 10px 10px;
     }
 
     .image-wrapper {
@@ -170,9 +176,10 @@
     }
 }
 
-/* Responsive: Large desktops */
+/* Large desktops */
 @media (min-width: 1025px) {
     .product-grid {
-        max-width: 280px; /* Original size */
+        flex: 1 1 280px;
+        max-width: 280px;
     }
 }
