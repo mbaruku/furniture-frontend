@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './Godown.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -16,17 +18,12 @@ export default function GodownPage() {
 
   const [items, setItems] = useState([]);
   const [imagePreview, setImagePreview] = useState(null);
-  const [success, setSuccess] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
-  const [postSuccess, setPostSuccess] = useState('');
-  const [postError, setPostError] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [editId, setEditId] = useState(null);
-
-
   const [postData, setPostData] = useState({
     product_name: '',
     unit_price: '',
@@ -35,12 +32,18 @@ export default function GodownPage() {
     category_type: 'normal',
   });
 
+  const [loading, setLoading] = useState(false); // general loading state
+  const [deleteLoadingId, setDeleteLoadingId] = useState(null); // track which item is being deleted
+  const [postLoading, setPostLoading] = useState(false); // track post modal loading
+  const [submitLoading, setSubmitLoading] = useState(false); // track form submit loading
+
   const fetchItems = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/api/godown`);
       setItems(res.data);
     } catch (err) {
       console.error("Fetch error:", err);
+      toast.error("❌ Imeshindikana kupata bidhaa!");
     }
   };
 
@@ -48,52 +51,44 @@ export default function GodownPage() {
     fetchItems();
   }, []);
 
-const handleSubmit = async () => {
-  if (!selectedProduct || !selectedProduct.id) {
-    setPostError("❌ Hakuna bidhaa iliyochaguliwa!");
-    return;
-  }
+  const handleSubmit = async () => {
+    if (!selectedProduct || !selectedProduct.id) {
+      toast.error("❌ Hakuna bidhaa iliyochaguliwa!");
+      return;
+    }
 
-  const preparedData = {
-    product_name: postData.product_name,
-    unit_price: parseFloat(postData.unit_price),
-    category_type: postData.category_type,
-    discount_percentage:
-      postData.category_type === 'discount'
-        ? parseInt(postData.discount_percentage) || 0
-        : 0,
-    discount_expiry:
-      postData.category_type === 'discount' && postData.discount_expiry
-        ? new Date(postData.discount_expiry).toISOString().split('T')[0]
-        : null,
+    const preparedData = {
+      product_name: postData.product_name,
+      unit_price: parseFloat(postData.unit_price),
+      category_type: postData.category_type,
+      discount_percentage:
+        postData.category_type === 'discount'
+          ? parseInt(postData.discount_percentage) || 0
+          : 0,
+      discount_expiry:
+        postData.category_type === 'discount' && postData.discount_expiry
+          ? new Date(postData.discount_expiry).toISOString().split('T')[0]
+          : null,
+    };
+
+    try {
+      setPostLoading(true);
+      await axios.patch(
+        `${API_BASE_URL}/api/godown/post/${selectedProduct.id}`,
+        preparedData,
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+      toast.success("✅ Bidhaa imepostiwa kikamilifu!");
+      setShowModal(false);
+      setSelectedProduct(null);
+      fetchItems();
+    } catch (err) {
+      console.error('Post submit error:', err);
+      toast.error("❌ Imeshindikana kuposti bidhaa!");
+    } finally {
+      setPostLoading(false);
+    }
   };
-
-  console.log("Prepared Data:", preparedData);
-
-  try {
-    await axios.patch(
-      `${API_BASE_URL}/api/godown/post/${selectedProduct.id}`,
-      preparedData,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-    setPostSuccess('✅ Bidhaa imepostiwa kikamilifu!');
-    setPostError('');
-    setShowModal(false);
-    setSelectedProduct(null);
-    fetchItems();
-    setTimeout(() => setPostSuccess(''), 3000);
-  } catch (err) {
-    console.error('Post submit error:', err.response || err.message || err);
-    setPostError('❌ Imeshindikana kuposti bidhaa!');
-    setPostSuccess('');
-    setTimeout(() => setPostError(''), 4000);
-  }
-};
-
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -105,15 +100,20 @@ const handleSubmit = async () => {
     }
   };
 
- const handleDelete = async (id) => {
-  if (!window.confirm('Una uhakika unataka kufuta bidhaa hii?')) return;
-  try {
-    await axios.delete(`${API_BASE_URL}/api/godown/${id}`);
-    fetchItems(); // Refresh items list
-  } catch (err) {
-    console.error('Delete error:', err);
-  }
-};
+  const handleDelete = async (id) => {
+    if (!window.confirm('Una uhakika unataka kufuta bidhaa hii?')) return;
+    try {
+      setDeleteLoadingId(id);
+      await axios.delete(`${API_BASE_URL}/api/godown/${id}`);
+      toast.success("✅ Bidhaa imetolewa kwa ufanisi!");
+      fetchItems();
+    } catch (err) {
+      console.error('Delete error:', err);
+      toast.error("❌ Imeshindikana kufuta bidhaa!");
+    } finally {
+      setDeleteLoadingId(null);
+    }
+  };
 
   const openPostModal = (item) => {
     setSelectedProduct(item);
@@ -132,84 +132,75 @@ const handleSubmit = async () => {
     setPostData(prev => ({ ...prev, [name]: value }));
   };
 
-
-
- const handleEdit = (item) => {
-  setEditMode(true);
-  setEditId(item.id);
-  setFormData({
-    product_name: item.product_name,
-    product_type: item.product_type,
-    quantity: item.quantity,
-    unit_price: item.unit_price,
-    date_added: item.date_added ? item.date_added.split('T')[0] : '',
-    image: null,
-  });
-  setImagePreview(item.image ? `${API_BASE_URL}/uploads/${item.image || item.image_filename}` : null);
-};
-
-
-const handlePostSubmit = async (e) => {
-  e.preventDefault();
-  const formPayload = new FormData();
-
-  formPayload.append("product_name", formData.product_name);
-  formPayload.append("product_type", formData.product_type);
-  formPayload.append("quantity", formData.quantity);
-  formPayload.append("unit_price", formData.unit_price);
-  formPayload.append("date_added", formData.date_added);
-  if (formData.image) {
-    formPayload.append("image", formData.image);
-  }
-
-  try {
-    if (editMode && editId) {
-      // UPDATE
-      await axios.put(`${API_BASE_URL}/api/godown/${editId}`, formPayload, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setSuccess("✅ Bidhaa imehaririwa kikamilifu!");
-    } else {
-      // ADD NEW
-      await axios.post(`${API_BASE_URL}/api/godown`, formPayload, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setSuccess("✅ Bidhaa imehifadhiwa kwenye godown!");
-    }
-
+  const handleEdit = (item) => {
+    setEditMode(true);
+    setEditId(item.id);
     setFormData({
-      product_name: '',
-      product_type: '',
-      quantity: '',
-      unit_price: '',
-      date_added: '',
+      product_name: item.product_name,
+      product_type: item.product_type,
+      quantity: item.quantity,
+      unit_price: item.unit_price,
+      date_added: item.date_added ? item.date_added.split('T')[0] : '',
       image: null,
     });
-    setImagePreview(null);
-    setEditMode(false);
-    setEditId(null);
-    fetchItems();
-    setTimeout(() => setSuccess(""), 3000);
-  } catch (err) {
-    console.error("Save error:", err);
-    setSuccess("❌ Imeshindikana kuhifadhi/hariri bidhaa.");
-    setTimeout(() => setSuccess(""), 3000);
-  }
-};
+    setImagePreview(item.image ? `${API_BASE_URL}/uploads/${item.image || item.image_filename}` : null);
+  };
 
+  const handlePostSubmit = async (e) => {
+    e.preventDefault();
+    const formPayload = new FormData();
+    formPayload.append("product_name", formData.product_name);
+    formPayload.append("product_type", formData.product_type);
+    formPayload.append("quantity", formData.quantity);
+    formPayload.append("unit_price", formData.unit_price);
+    formPayload.append("date_added", formData.date_added);
+    if (formData.image) formPayload.append("image", formData.image);
 
+    try {
+      setSubmitLoading(true);
+      if (editMode && editId) {
+        await axios.put(`${API_BASE_URL}/api/godown/${editId}`, formPayload, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        toast.success("✅ Bidhaa imehaririwa kikamilifu!");
+      } else {
+        await axios.post(`${API_BASE_URL}/api/godown`, formPayload, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        toast.success("✅ Bidhaa imehifadhiwa kwenye godown!");
+      }
 
+      setFormData({
+        product_name: '',
+        product_type: '',
+        quantity: '',
+        unit_price: '',
+        date_added: '',
+        image: null,
+      });
+      setImagePreview(null);
+      setEditMode(false);
+      setEditId(null);
+      fetchItems();
+    } catch (err) {
+      console.error("Save error:", err);
+      toast.error("❌ Imeshindikana kuhifadhi/hariri bidhaa.");
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
 
   const filteredItems = items.filter(item => {
     const matchesSearch = item.product_name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filterType === 'all' || item.product_type.toLowerCase() === filterType;
+    const matchesFilter = filterType === 'all' || item.product_type.toLowerCase() === filterType.toLowerCase();
     return matchesSearch && matchesFilter;
   });
 
   return (
     <div className="godown-page">
+      <ToastContainer position="top-right" autoClose={3000} />
+      
       <h2>Ongeza Bidhaa Mpya</h2>
-
       <form onSubmit={handlePostSubmit} className="product-form" encType="multipart/form-data">
         <input name="product_name" value={formData.product_name} onChange={handleChange} placeholder="Jina la bidhaa" required />
         <input name="product_type" value={formData.product_type} onChange={handleChange} placeholder="Aina ya bidhaa" required />
@@ -218,12 +209,10 @@ const handlePostSubmit = async (e) => {
         <input name="date_added" type="date" value={formData.date_added} onChange={handleChange} required />
         <input name="image" type="file" onChange={handleChange} accept="image/*" />
         {imagePreview && <img src={imagePreview} alt="Preview" className="preview-image" />}
-        <button type="submit">Hifadhi</button>
+        <button type="submit" disabled={submitLoading}>
+          {submitLoading ? 'Inahifadhi...' : 'Hifadhi'}
+        </button>
       </form>
-
-      {success && <p className="success-msg">{success}</p>}
-      {postSuccess && <p className="success-msg">{postSuccess}</p>}
-      {postError && <p className="error-msg">{postError}</p>}
 
       <div className="controls">
         <input
@@ -265,9 +254,13 @@ const handlePostSubmit = async (e) => {
               <td>{item.quantity * item.unit_price} Tsh</td>
               <td>{item.date_added ? new Date(item.date_added).toLocaleDateString() : '-'}</td>
               <td>
-                <button onClick={() => openPostModal(item)}>Post</button>
+                <button onClick={() => openPostModal(item)} disabled={postLoading}>
+                  {postLoading && selectedProduct?.id === item.id ? 'Posting...' : 'Post'}
+                </button>
                 <button onClick={() => handleEdit(item)}>Hariri</button>
-                <button onClick={() => handleDelete(item.id)}>Futa</button>
+                <button onClick={() => handleDelete(item.id)} disabled={deleteLoadingId === item.id}>
+                  {deleteLoadingId === item.id ? 'Inafutwa...' : 'Futa'}
+                </button>
               </td>
             </tr>
           ))}
@@ -293,36 +286,36 @@ const handlePostSubmit = async (e) => {
               </>
             )}
             <div className="modal-actions">
-              <button onClick={handleSubmit}>Post Sasa</button>
-              <button onClick={() => setShowModal(false)}>Funga</button>
+              <button onClick={handleSubmit} disabled={postLoading}>
+                {postLoading ? 'Inapostiwa...' : 'Post Sasa'}
+              </button>
+              <button onClick={() => setShowModal(false)} disabled={postLoading}>Funga</button>
             </div>
           </div>
         </div>
       )}
 
-{editMode && (
-  <button
-    type="button"
-    onClick={() => {
-      setEditMode(false);
-      setEditId(null);
-      setFormData({
-        product_name: '',
-        product_type: '',
-        quantity: '',
-        unit_price: '',
-        date_added: '',
-        image: null,
-      });
-      setImagePreview(null);
-    }}
-    className="cancel-edit"
-  >
-    Ghairi Hariri
-  </button>
-)}
-
-
+      {editMode && (
+        <button
+          type="button"
+          onClick={() => {
+            setEditMode(false);
+            setEditId(null);
+            setFormData({
+              product_name: '',
+              product_type: '',
+              quantity: '',
+              unit_price: '',
+              date_added: '',
+              image: null,
+            });
+            setImagePreview(null);
+          }}
+          className="cancel-edit"
+        >
+          Ghairi Hariri
+        </button>
+      )}
     </div>
   );
 }

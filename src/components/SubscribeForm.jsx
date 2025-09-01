@@ -1,21 +1,31 @@
 import { useState } from "react";
 import axios from "axios";
-import "./SubscribeForm.css"; // 👈 Hakikisha umeimport CSS
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import "./SubscribeForm.css";
 
- const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
- 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default function SubscribeForm() {
   const [email, setEmail] = useState("");
-
- 
+  const [loading, setLoading] = useState(false);
 
   const handleSubscribe = async () => {
+    if (!email.trim()) {
+      toast.warning("Tafadhali weka email sahihi.");
+      return;
+    }
+
+    setLoading(true);
     try {
       await axios.post(`${API_BASE_URL}/api/subscribe`, { email });
-      alert("Umefanikiwa kujiunga kupokea matangazo.");
-      setEmail(""); // Clear input
+      toast.success("✅ Umefanikiwa kujiunga kupokea matangazo.");
+      setEmail("");
     } catch (err) {
-      alert("Email hii tayari imesha jiunga.");
+      console.error(err);
+      toast.error("❌ Email hii tayari imesha jiunga au hitilafu imejitokeza.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -27,8 +37,10 @@ export default function SubscribeForm() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
-      <button onClick={handleSubscribe}>Jiunge Kupokea Matangazo</button>
+      <button onClick={handleSubscribe} disabled={loading}>
+        {loading ? "Inajiunga..." : "Jiunge Kupokea Matangazo"}
+      </button>
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
     </div>
   );
 }
-

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import "./ManualOrderForm.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -20,9 +22,9 @@ export default function ManualOrderForm() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
-  const [popup, setPopup] = useState({ show: false, type: "", message: "" });
+  const [isLoading, setIsLoading] = useState(false); // Spinner state
 
-  // Fetch products from Godown & Workshop
+  // Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -30,22 +32,20 @@ export default function ManualOrderForm() {
           axios.get(`${API_BASE_URL}/api/godown/posted`),
           axios.get(`${API_BASE_URL}/api/workshop/posted`),
         ]);
-
         const combined = [
           ...godownRes.data.map((p) => ({ ...p, source: "godown" })),
           ...workshopRes.data.map((p) => ({ ...p, source: "workshop" })),
         ];
-
         setProducts(combined);
       } catch (err) {
-        console.error("Failed to fetch products", err);
+        toast.error("Imeshindikana kupakua bidhaa.");
+        console.error(err);
       }
     };
-
     fetchProducts();
   }, []);
 
-  // Filter products by search term
+  // Filter products
   useEffect(() => {
     const filtered = products.filter((product) =>
       product.product_name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -58,10 +58,11 @@ export default function ManualOrderForm() {
     const uniqueId = `${product.source}-${product.id ?? product.product_name}`;
     if (!selectedItems.find((item) => item.uniqueId === uniqueId)) {
       setSelectedItems([...selectedItems, { ...product, quantity: 1, uniqueId }]);
+      toast.success(`${product.product_name} imeongezwa kwenye oda.`);
     }
   };
 
-  // Change quantity of selected item
+  // Quantity change
   const handleQuantityChange = (uniqueId, quantity) => {
     setSelectedItems((prev) =>
       prev.map((item) =>
@@ -70,74 +71,73 @@ export default function ManualOrderForm() {
     );
   };
 
-  // Handle form input changes
+  // Input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Calculate total price
+  // Total calculation
   const calculateTotal = () =>
     selectedItems.reduce((total, item) => total + item.unit_price * item.quantity, 0);
 
-  // Handle form submission
+  // Submit form
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (formData.delivery_option === "yes" && !formData.delivery_location.trim()) {
-    alert("Tafadhali weka mahali pa kufikishiwa kwa delivery.");
-    return;
-  }
+    if (formData.delivery_option === "yes" && !formData.delivery_location.trim()) {
+      toast.warning("Tafadhali weka mahali pa kufikishiwa.");
+      return;
+    }
 
-  // Calculate total price
-  const total_price = calculateTotal();
+    setIsLoading(true);
 
-  // Prepare items with source and product_id
-  const items = selectedItems.map((item) => ({
-    product_id: item.id ?? null,        // use id if available
-    product_name: item.product_name,
-    product_type: item.product_type,
-    price: item.unit_price,
-    quantity: item.quantity,
-    source: item.source,                // godown or workshop
-  }));
+    const total_price = calculateTotal();
+    const items = selectedItems.map((item) => ({
+      product_id: item.id ?? null,
+      product_name: item.product_name,
+      product_type: item.product_type,
+      price: item.unit_price,
+      quantity: item.quantity,
+      source: item.source,
+    }));
 
-  try {
-    const response = await axios.post(`${API_BASE_URL}/api/manual-order`, {
-      customer_name: formData.customer_name,
-      phone: formData.phone,
-      email: formData.email,
-      location: formData.location,
-      payment_method: formData.payment_method,
-      items,
-      notes: formData.notes,
-      total_price,                       // use the calculated total
-      delivery_option: formData.delivery_option,
-      delivery_location: formData.delivery_location,
-    });
+    try {
+      const response = await axios.post(`${API_BASE_URL}/api/manual-order`, {
+        customer_name: formData.customer_name,
+        phone: formData.phone,
+        email: formData.email,
+        location: formData.location,
+        payment_method: formData.payment_method,
+        items,
+        notes: formData.notes,
+        total_price,
+        delivery_option: formData.delivery_option,
+        delivery_location: formData.delivery_location,
+      });
 
-    setPopup({ show: true, type: "success", message: response.data.message });
+      toast.success(response.data.message);
 
-    // Reset form & selected items
-    setFormData({
-      customer_name: "",
-      phone: "",
-      email: "",
-      location: "",
-      payment_method: "cash",
-      items: [],
-      notes: "",
-      delivery_option: "",
-      delivery_location: "",
-    });
-    setSelectedItems([]);
-
-  } catch (err) {
-    console.error(err);
-    setPopup({ show: true, type: "error", message: "Hitilafu imetokea." });
-  }
-};
-
+      // Reset
+      setFormData({
+        customer_name: "",
+        phone: "",
+        email: "",
+        location: "",
+        payment_method: "cash",
+        items: [],
+        notes: "",
+        delivery_option: "",
+        delivery_location: "",
+      });
+      setSelectedItems([]);
+    } catch (err) {
+      console.error(err);
+      toast.error("Hitilafu imetokea, jaribu tena.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="manual-order-container">
@@ -168,7 +168,6 @@ export default function ManualOrderForm() {
           value={formData.email}
         />
 
-        {/* Delivery option */}
         <select
           name="delivery_option"
           onChange={handleChange}
@@ -180,7 +179,6 @@ export default function ManualOrderForm() {
           <option value="no">Hapana</option>
         </select>
 
-        {/* Delivery location */}
         {formData.delivery_option === "yes" && (
           <input
             type="text"
@@ -193,7 +191,6 @@ export default function ManualOrderForm() {
           />
         )}
 
-        {/* Payment method */}
         <select
           name="payment_method"
           onChange={handleChange}
@@ -205,7 +202,6 @@ export default function ManualOrderForm() {
           <option value="bank">Benki</option>
         </select>
 
-        {/* Product search */}
         <input
           type="text"
           placeholder="Andika jina la bidhaa..."
@@ -213,7 +209,6 @@ export default function ManualOrderForm() {
           value={searchTerm}
         />
 
-        {/* Filtered products list */}
         {filteredProducts.length > 0 && (
           <ul className="product-list">
             {filteredProducts.map((product, index) => (
@@ -228,7 +223,6 @@ export default function ManualOrderForm() {
           </ul>
         )}
 
-        {/* Selected items table */}
         {selectedItems.length > 0 && (
           <table className="selected-items-table">
             <thead>
@@ -269,10 +263,12 @@ export default function ManualOrderForm() {
           Jumla ya Gharama: {(calculateTotal() || 0).toLocaleString()} TZS
         </div>
 
-        <button type="submit">Tuma Order</button>
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? "Inatuma..." : "Tuma Order"}
+        </button>
       </form>
 
-      {popup.show && <div className={`popup ${popup.type}`}>{popup.message}</div>}
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
     </div>
   );
 }

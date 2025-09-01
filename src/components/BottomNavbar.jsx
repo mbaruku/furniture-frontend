@@ -6,7 +6,7 @@ export default function BottomNavbar() {
   const location = useLocation();
 
   return (
-    <div className="bottom-navbar shadow-lg">
+    <div className="bottom-navbar shadow">
       <Link to="/" className={location.pathname === '/' ? 'active' : ''}>
         <FaHome size={20} />
         <span>Nyumbani</span>

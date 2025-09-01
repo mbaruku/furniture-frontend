@@ -9,9 +9,11 @@ export default function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isSuperAdmin, setIsSuperAdmin] = useState(null);
+  const [loading, setLoading] = useState(false); // state ya spinner
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true); // anza spinner
     try {
       const res = await axios.post(`${API_BASE_URL}/api/admins/login`, {
         username,
@@ -20,6 +22,8 @@ export default function LoginForm() {
       setIsSuperAdmin(res.data.is_superadmin);
     } catch (err) {
       alert("Login failed: " + err.response?.data?.error);
+    } finally {
+      setLoading(false); // stop spinner
     }
   };
 
@@ -54,7 +58,13 @@ export default function LoginForm() {
             />
           </div>
 
-          <button type="submit" className="btn btn-primary">Login</button>
+          <button type="submit" className="btn btn-primary" disabled={loading}>
+            {loading ? (
+              <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            ) : (
+              "Login"
+            )}
+          </button>
         </form>
       </div>
     </div>

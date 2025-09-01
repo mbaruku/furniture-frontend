@@ -12,24 +12,19 @@ export default function AdminOrders() {
   const [filterName, setFilterName] = useState("");
   const [loadingOrderId, setLoadingOrderId] = useState(null);
   const [deliveryFees, setDeliveryFees] = useState({});
+  const [disabledOrders, setDisabledOrders] = useState({}); // Track disabled inputs
 
   const fetchOrders = async () => {
-  try {
-    const res = await axios.get(`${API_BASE_URL}/api/orders`);
-    // Zote ni online orders kwa hiyo tunaziset moja kwa moja
-    setOrders(res.data.orders || []);
-  } catch (err) {
-    console.error("Failed to fetch orders:", err);
-    toast.error("⚠️ Imeshindikana kupata oda kutoka server", {
-      position: "top-center",
-    });
-  }
-};
-
-useEffect(() => {
-  fetchOrders();
-}, []);
-
+    try {
+      const res = await axios.get(`${API_BASE_URL}/api/orders`);
+      setOrders(res.data.orders || []);
+    } catch (err) {
+      console.error("Failed to fetch orders:", err);
+      toast.error("⚠️ Imeshindikana kupata oda kutoka server", {
+        position: "top-center",
+      });
+    }
+  };
 
   useEffect(() => {
     fetchOrders();
@@ -41,6 +36,8 @@ useEffect(() => {
       const res = await axios.post(
         `${API_BASE_URL}/api/orders/${orderId}/confirm`
       );
+
+      // Update order status locally
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           order.id === orderId
@@ -48,6 +45,9 @@ useEffect(() => {
             : order
         )
       );
+
+      // Disable price & delivery inputs for this order
+      setDisabledOrders((prev) => ({ ...prev, [orderId]: true }));
 
       toast.success("✅ Malipo yamethibitishwa", { position: "top-center" });
     } catch (error) {
@@ -57,6 +57,38 @@ useEffect(() => {
       });
     } finally {
       setLoadingOrderId(null);
+    }
+  };
+
+  const handlePriceChange = async (orderId, itemIndex, newPrice) => {
+    try {
+      const price = parseFloat(newPrice) || 0;
+
+      await axios.put(
+        `${API_BASE_URL}/api/orders/${orderId}/update-item-price-orders`,
+        {
+          item_index: itemIndex,
+          price,
+        }
+      );
+
+      setOrders((prev) =>
+        prev.map((o) => {
+          if (o.id === orderId) {
+            const updatedItems = [...o.order_items];
+            updatedItems[itemIndex].price = price;
+            return { ...o, order_items: updatedItems };
+          }
+          return o;
+        })
+      );
+
+      toast.success("✅ Price imeupdatewa", { position: "top-center" });
+    } catch (err) {
+      console.error("Failed to update price:", err);
+      toast.error("⚠️ Imeshindikana kuupdate price", {
+        position: "top-center",
+      });
     }
   };
 
@@ -200,6 +232,9 @@ useEffect(() => {
                 const totalWithDelivery =
                   total + (deliveryFees[order.id] ?? order.delivery_fee ?? 0);
 
+                const isDisabled =
+                  order.status === "confirmed" || disabledOrders[order.id];
+
                 return (
                   <tr key={order.id}>
                     <td>{index + 1}</td>
@@ -230,7 +265,17 @@ useEffect(() => {
                         {order.order_items.map((item, i) => (
                           <li key={i}>
                             {item.name || item.product_name}-{item.product_type}{" "}
-                            ({item.quantity} x {item.price} TZS)
+                            ({item.quantity} x{" "}
+                            <input
+                              type="number"
+                              value={item.price}
+                              onChange={(e) =>
+                                handlePriceChange(order.id, i, e.target.value)
+                              }
+                              style={{ width: "80px" }}
+                              disabled={isDisabled}
+                            />{" "}
+                            TZS)
                           </li>
                         ))}
                       </ul>
@@ -240,9 +285,7 @@ useEffect(() => {
                     </td>
                     <td>
                       <Badge
-                        bg={
-                          order.status === "confirmed" ? "success" : "warning"
-                        }
+                        bg={order.status === "confirmed" ? "success" : "warning"}
                       >
                         {order.status === "confirmed" ? "Paid" : "Pending"}
                       </Badge>
@@ -268,9 +311,7 @@ useEffect(() => {
                     <td>
                       <Form.Control
                         type="number"
-                        value={
-                          deliveryFees[order.id] ?? order.delivery_fee ?? 0
-                        }
+                        value={deliveryFees[order.id] ?? order.delivery_fee ?? 0}
                         onChange={(e) =>
                           setDeliveryFees((prev) => ({
                             ...prev,
@@ -278,7 +319,8 @@ useEffect(() => {
                           }))
                         }
                         disabled={
-                          order.delivery_option?.toLowerCase() !== "yes"
+                          order.delivery_option?.toLowerCase() !== "yes" ||
+                          isDisabled
                         }
                         style={{ marginBottom: 4 }}
                         placeholder="Delivery Fee"
@@ -290,6 +332,7 @@ useEffect(() => {
                           size="sm"
                           onClick={() => handleUpdateDelivery(order.id)}
                           style={{ marginBottom: 4 }}
+                          disabled={isDisabled} // disable update button
                         >
                           Update Delivery
                         </Button>

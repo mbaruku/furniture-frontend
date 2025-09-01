@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './WorkShopPage.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -16,16 +18,12 @@ export default function WorkShopPage() {
 
   const [items, setItems] = useState([]);
   const [imagePreview, setImagePreview] = useState(null);
-  const [success, setSuccess] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
-  const [postSuccess, setPostSuccess] = useState('');
-  const [postError, setPostError] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [editId, setEditId] = useState(null);
-
   const [postData, setPostData] = useState({
     product_name: '',
     unit_price: '',
@@ -34,13 +32,17 @@ export default function WorkShopPage() {
     category_type: 'normal',
   });
 
-  // Fetch all workshop items
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [postLoading, setPostLoading] = useState(false);
+  const [deleteLoadingId, setDeleteLoadingId] = useState(null);
+
   const fetchItems = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/api/workshop`);
       setItems(res.data);
     } catch (err) {
       console.error("Fetch error:", err);
+      toast.error("❌ Imeshindikana kupata bidhaa!");
     }
   };
 
@@ -48,10 +50,9 @@ export default function WorkShopPage() {
     fetchItems();
   }, []);
 
-  // Submit "Post" data (PATCH)
   const handleSubmit = async () => {
     if (!selectedProduct || !selectedProduct.id) {
-      setPostError("❌ Hakuna bidhaa iliyochaguliwa!");
+      toast.error("❌ Hakuna bidhaa iliyochaguliwa!");
       return;
     }
 
@@ -70,30 +71,24 @@ export default function WorkShopPage() {
     };
 
     try {
+      setPostLoading(true);
       await axios.patch(
         `${API_BASE_URL}/api/workshop/post/${selectedProduct.id}`,
         preparedData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
+        { headers: { 'Content-Type': 'application/json' } }
       );
-      setPostSuccess('✅ Bidhaa imepostiwa kikamilifu!');
-      setPostError('');
+      toast.success("✅ Bidhaa imepostiwa kikamilifu!");
       setShowModal(false);
       setSelectedProduct(null);
       fetchItems();
-      setTimeout(() => setPostSuccess(''), 3000);
     } catch (err) {
-      console.error('Post submit error:', err.response || err.message || err);
-      setPostError('❌ Imeshindikana kuposti bidhaa!');
-      setPostSuccess('');
-      setTimeout(() => setPostError(''), 4000);
+      console.error('Post submit error:', err);
+      toast.error("❌ Imeshindikana kuposti bidhaa!");
+    } finally {
+      setPostLoading(false);
     }
   };
 
-  // Handle form changes for add/edit
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (files) {
@@ -104,18 +99,21 @@ export default function WorkShopPage() {
     }
   };
 
-  // Delete item
   const handleDelete = async (id) => {
     if (!window.confirm('Una uhakika unataka kufuta bidhaa hii?')) return;
     try {
+      setDeleteLoadingId(id);
       await axios.delete(`${API_BASE_URL}/api/workshop/${id}`);
+      toast.success("✅ Bidhaa imetolewa kwa ufanisi!");
       fetchItems();
     } catch (err) {
       console.error('Delete error:', err);
+      toast.error("❌ Imeshindikana kufuta bidhaa!");
+    } finally {
+      setDeleteLoadingId(null);
     }
   };
 
-  // Open post modal for a product
   const openPostModal = (item) => {
     setSelectedProduct(item);
     setPostData({
@@ -128,13 +126,11 @@ export default function WorkShopPage() {
     setShowModal(true);
   };
 
-  // Handle post modal input change
   const handlePostChange = (e) => {
     const { name, value } = e.target;
     setPostData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Open edit mode
   const handleEdit = (item) => {
     setEditMode(true);
     setEditId(item.id);
@@ -149,35 +145,29 @@ export default function WorkShopPage() {
     setImagePreview(item.image_filename ? `${API_BASE_URL}/uploads_workshop/${item.image_filename}` : null);
   };
 
-  // Submit add or edit form
   const handlePostSubmit = async (e) => {
     e.preventDefault();
     const formPayload = new FormData();
-
     formPayload.append("product_name", formData.product_name);
     formPayload.append("product_type", formData.product_type);
     formPayload.append("quantity", formData.quantity);
     formPayload.append("unit_price", formData.unit_price);
     formPayload.append("date_added", formData.date_added);
-    if (formData.image) {
-      formPayload.append("image", formData.image);
-    }
+    if (formData.image) formPayload.append("image", formData.image);
 
     try {
+      setSubmitLoading(true);
       if (editMode && editId) {
-        // UPDATE
         await axios.put(`${API_BASE_URL}/api/workshop/${editId}`, formPayload, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-        setSuccess("✅ Bidhaa imehaririwa kikamilifu!");
+        toast.success("✅ Bidhaa imehaririwa kikamilifu!");
       } else {
-        // ADD NEW
         await axios.post(`${API_BASE_URL}/api/workshop`, formPayload, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-        setSuccess("✅ Bidhaa imehifadhiwa kwenye workshop!");
+        toast.success("✅ Bidhaa imehifadhiwa kwenye workshop!");
       }
-
       setFormData({
         product_name: '',
         product_type: '',
@@ -190,25 +180,25 @@ export default function WorkShopPage() {
       setEditMode(false);
       setEditId(null);
       fetchItems();
-      setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
       console.error("Save error:", err);
-      setSuccess("❌ Imeshindikana kuhifadhi/hariri bidhaa.");
-      setTimeout(() => setSuccess(""), 3000);
+      toast.error("❌ Imeshindikana kuhifadhi/hariri bidhaa.");
+    } finally {
+      setSubmitLoading(false);
     }
   };
 
-  // Filtering items by search and product type
   const filteredItems = items.filter(item => {
     const matchesSearch = item.product_name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filterType === 'all' || item.product_type.toLowerCase() === filterType;
+    const matchesFilter = filterType === 'all' || item.product_type.toLowerCase() === filterType.toLowerCase();
     return matchesSearch && matchesFilter;
   });
 
   return (
     <div className="workshop-page">
+      <ToastContainer position="top-right" autoClose={3000} />
+      
       <h2>Ongeza Bidhaa Mpya</h2>
-
       <form onSubmit={handlePostSubmit} className="product-form" encType="multipart/form-data">
         <input name="product_name" value={formData.product_name} onChange={handleChange} placeholder="Jina la bidhaa" required />
         <input name="product_type" value={formData.product_type} onChange={handleChange} placeholder="Aina ya bidhaa" required />
@@ -217,12 +207,10 @@ export default function WorkShopPage() {
         <input name="date_added" type="date" value={formData.date_added} onChange={handleChange} required />
         <input name="image" type="file" onChange={handleChange} accept="image/*" />
         {imagePreview && <img src={imagePreview} alt="Preview" className="preview-image" />}
-        <button type="submit">{editMode ? "Hifadhi Mabadiliko" : "Hifadhi"}</button>
+        <button type="submit" disabled={submitLoading}>
+          {submitLoading ? (editMode ? "Inasasisha..." : "Inahifadhi...") : (editMode ? "Hifadhi Mabadiliko" : "Hifadhi")}
+        </button>
       </form>
-
-      {success && <p className="success-msg">{success}</p>}
-      {postSuccess && <p className="success-msg">{postSuccess}</p>}
-      {postError && <p className="error-msg">{postError}</p>}
 
       <div className="controls">
         <input
@@ -258,14 +246,8 @@ export default function WorkShopPage() {
             <tr key={item.id}>
               <td>
                 {item.image_filename ? (
-                  <img
-                    src={`${API_BASE_URL}/uploads_workshop/${item.image_filename}`}
-                    alt={item.product_name}
-                    height="50"
-                  />
-                ) : (
-                  <span>—</span>
-                )}
+                  <img src={`${API_BASE_URL}/uploads_workshop/${item.image_filename}`} alt={item.product_name} height="50" />
+                ) : <span>—</span>}
               </td>
               <td>{item.product_name}</td>
               <td>{item.product_type}</td>
@@ -274,9 +256,13 @@ export default function WorkShopPage() {
               <td>{(item.quantity * item.unit_price).toFixed(2)} Tsh</td>
               <td>{item.date_added ? new Date(item.date_added).toLocaleDateString() : '-'}</td>
               <td>
-                <button onClick={() => openPostModal(item)}>Post</button>
+                <button onClick={() => openPostModal(item)} disabled={postLoading}>
+                  {postLoading && selectedProduct?.id === item.id ? "Inapostiwa..." : "Post"}
+                </button>
                 <button onClick={() => handleEdit(item)}>Hariri</button>
-                <button onClick={() => handleDelete(item.id)}>Futa</button>
+                <button onClick={() => handleDelete(item.id)} disabled={deleteLoadingId === item.id}>
+                  {deleteLoadingId === item.id ? "Inafutwa..." : "Futa"}
+                </button>
               </td>
             </tr>
           ))}
@@ -302,8 +288,10 @@ export default function WorkShopPage() {
               </>
             )}
             <div className="modal-actions">
-              <button onClick={handleSubmit}>Post Sasa</button>
-              <button onClick={() => setShowModal(false)}>Funga</button>
+              <button onClick={handleSubmit} disabled={postLoading}>
+                {postLoading ? "Inapostiwa..." : "Post Sasa"}
+              </button>
+              <button onClick={() => setShowModal(false)} disabled={postLoading}>Funga</button>
             </div>
           </div>
         </div>

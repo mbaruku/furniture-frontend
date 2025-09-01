@@ -1,9 +1,10 @@
 import { useState } from "react";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import "./CustomerForm.css";
 
-
- const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function CustomerForm() {
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
@@ -11,17 +12,18 @@ export default function CustomerForm() {
 
   const handleSubmit = async () => {
     if (!form.name || !form.email || !form.message) {
-      alert("Tafadhali jaza sehemu zote muhimu.");
+      toast.warning("Tafadhali jaza sehemu zote muhimu.");
       return;
     }
 
     setLoading(true);
     try {
       await axios.post(`${API_BASE_URL}/api/contact`, form);
-      alert("✅ Ujumbe umetumwa kwa Admin.");
+      toast.success("✅ Ujumbe umetumwa kwa Admin.");
       setForm({ name: "", email: "", subject: "", message: "" });
     } catch (err) {
-      alert("❌ Kuna shida kutuma ujumbe.");
+      console.error(err);
+      toast.error("❌ Kuna shida kutuma ujumbe.");
     } finally {
       setLoading(false);
     }
@@ -56,6 +58,7 @@ export default function CustomerForm() {
       <button onClick={handleSubmit} disabled={loading}>
         {loading ? "Inatuma..." : "Tuma Ujumbe"}
       </button>
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
     </div>
   );
 }

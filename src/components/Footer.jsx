@@ -15,7 +15,7 @@ const Footer = () => {
           <h4>Wasiliana Nasi</h4>
           <p><FaPhoneAlt /> +255 764 262 210</p>
           <p><FaWhatsapp /> +255 675 310 073</p>
-          <p><FaMapMarkerAlt /> Kinindoni Mkwajuni, Sinza Africsana</p>
+          <p><FaMapMarkerAlt /> Kinondoni Mkwajuni, Sinza Africasana</p>
         </div>
 
         <div className="footer-social">

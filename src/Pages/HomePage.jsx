@@ -7,36 +7,32 @@ import Testimonials from "../components/Testimonials";
 import VideoSection from "../components/VideoSection";
 import BottomNavbar from "../components/BottomNavbar";
 
-
 import './HomePage.css'
 
 const HomePage = () => {
   return (
     <>
-    <div >
-      {/* Top Navigation */}
-      <Topbar showSearch={false} />
+      <div className="home-page-container">
+        {/* Top Navigation */}
+        <Topbar showSearch={false} />
 
-      {/* Main Content */}
-      <main>
-        <HomeSlider />
-        <WhyChooseUs />
-        <VideoSection />
-        <Testimonials />
-        <ProductSection title="Bidhaa Mpya" categoryType="new" />
-        <ProductSection title="Bidhaa Zinazouzwa Sana" categoryType="best" />
-        <ProductSection title="Bidhaa kwa Punguzo" categoryType="discount" />
-      </main>
+        {/* Main Content */}
+        <main className="content">
+          <HomeSlider />
+          <WhyChooseUs />
+          <VideoSection />
+          <Testimonials />
+          <ProductSection title="Bidhaa Mpya" categoryType="new" />
+          <ProductSection title="Bidhaa Zinazouzwa Sana" categoryType="best" />
+          <ProductSection title="Bidhaa kwa Punguzo" categoryType="discount" />
+        </main>
 
-      {/* Footer */}
-      <Footer />
+        {/* Footer */}
+        <Footer />
+      </div>
 
-      {/* Bottom Navigation for Mobile */}
-      
-    </div>
-    <div>
-    <BottomNavbar />
-    </div>
+      {/* Bottom Navigation (Fixed) */}
+      <BottomNavbar />
     </>
   );
 };

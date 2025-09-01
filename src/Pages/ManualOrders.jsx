@@ -11,6 +11,7 @@ export default function ManualOrders() {
   const [filterName, setFilterName] = useState("");
   const [loadingOrderId, setLoadingOrderId] = useState(null);
   const [deliveryFees, setDeliveryFees] = useState({});
+  const [disabledOrders, setDisabledOrders] = useState({}); // Track disabled inputs
 
   // Fetch manual orders
   const fetchOrders = async () => {
@@ -50,6 +51,10 @@ export default function ManualOrders() {
           o.id === orderId ? { ...o, status: res.data.status || "paid" } : o
         )
       );
+
+      // Disable inputs for this order
+      setDisabledOrders((prev) => ({ ...prev, [orderId]: true }));
+
       toast.success("✅ Malipo yamethibitishwa", { position: "top-center" });
     } catch (err) {
       console.error("Confirmation failed:", err);
@@ -58,6 +63,40 @@ export default function ManualOrders() {
       });
     } finally {
       setLoadingOrderId(null);
+    }
+  };
+
+  // Update item price
+  const handlePriceChange = async (orderId, index, newPrice) => {
+    try {
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order.id === orderId
+            ? {
+                ...order,
+                items: order.items.map((item, i) =>
+                  i === index
+                    ? { ...item, price: parseFloat(newPrice) || 0 }
+                    : item
+                ),
+              }
+            : order
+        )
+      );
+
+      await axios.put(`${API_BASE_URL}/api/manual-orders/${orderId}/update-item-price`, {
+        item_index: index,
+        price: parseFloat(newPrice) || 0,
+      });
+
+      toast.success("✅ Price ime-update kwenye backend", {
+        position: "top-center",
+      });
+    } catch (err) {
+      console.error("Failed to update price:", err);
+      toast.error("⚠️ Imeshindikana update price kwenye backend", {
+        position: "top-center",
+      });
     }
   };
 
@@ -77,11 +116,9 @@ export default function ManualOrders() {
     }
   };
 
-  // Generate PDF (invoice or delivery note)
+  // Generate PDF
   const generatePDF = (order, type = "invoice") => {
     const doc = new jsPDF("p", "mm", "a4");
-
-    // Header
     doc.setFillColor(type === "invoice" ? "#007bff" : "#17a2b8");
     doc.rect(0, 0, 210, 20, "F");
     doc.setTextColor("#fff");
@@ -93,7 +130,6 @@ export default function ManualOrders() {
       { align: "center" }
     );
 
-    // Customer info
     doc.setFontSize(12);
     doc.setTextColor("#000");
     doc.text(`Order ID: ${order.id}`, 14, 30);
@@ -103,7 +139,6 @@ export default function ManualOrders() {
     doc.text(`Payment Method: ${order.payment_method}`, 14, 54);
     doc.text(`Delivery: ${order.delivery_option || "No"}`, 14, 60);
 
-    // Table header
     let y = 70;
     doc.setFillColor("#343a40");
     doc.setTextColor("#fff");
@@ -115,7 +150,6 @@ export default function ManualOrders() {
     doc.text("Price", 150, y);
     doc.text("Total", 170, y);
 
-    // Table rows
     y += 6;
     let totalPrice = 0;
     order.items?.forEach((item, i) => {
@@ -149,14 +183,12 @@ export default function ManualOrders() {
       y + 7
     );
 
-    // Muhuri section
     doc.setDrawColor(0);
     doc.setFillColor("#e6e6e6");
     doc.rect(14, y + 15, 60, 20, "F");
     doc.setFontSize(10);
     doc.text("Muhuri wa Ofisi", 16, y + 28);
 
-    // Save PDF
     doc.save(
       `${type === "invoice" ? "Invoice" : "DeliveryNote"}_Order_${order.id}.pdf`
     );
@@ -203,11 +235,15 @@ export default function ManualOrders() {
               {filteredOrders.map((order, index) => {
                 const total =
                   order.items?.reduce(
-                    (sum, item) => sum + (item.price || 0) * (item.quantity || 0),
+                    (sum, item) =>
+                      sum + (item.price || 0) * (item.quantity || 0),
                     0
                   ) || 0;
                 const totalWithDelivery =
                   total + (deliveryFees[order.id] ?? order.delivery_fee ?? 0);
+
+                const isDisabled =
+                  order.status === "paid" || disabledOrders[order.id];
 
                 return (
                   <tr key={order.id}>
@@ -239,11 +275,13 @@ export default function ManualOrders() {
                             }
                             placeholder="Delivery Fee"
                             style={{ width: "100px", marginBottom: "4px" }}
+                            disabled={isDisabled} // disable after confirmation
                           />
                           <Button
                             size="sm"
                             variant="secondary"
                             onClick={() => handleUpdateDelivery(order.id)}
+                            disabled={isDisabled} // disable update button
                           >
                             Update
                           </Button>
@@ -256,7 +294,18 @@ export default function ManualOrders() {
                       <ul style={{ paddingLeft: 16, marginBottom: 0 }}>
                         {order.items?.map((item, i) => (
                           <li key={i}>
-                            {item.product_name} - {item.product_type} ({item.quantity} x {item.price} TZS)
+                            {item.product_name} - {item.product_type} (
+                            {item.quantity} x{" "}
+                            <input
+                              type="number"
+                              value={item.price}
+                              onChange={(e) =>
+                                handlePriceChange(order.id, i, e.target.value)
+                              }
+                              style={{ width: "100px" }}
+                              disabled={isDisabled} // disable after confirmation
+                            />{" "}
+                            TZS)
                           </li>
                         ))}
                       </ul>
